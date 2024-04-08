@@ -15,3 +15,9 @@
   ```bash
   make proto
   ```
+  
+## Build the Docker image
+- Run the following command to build the Docker image
+  ```bash
+  make docker-build && make docker-push
+  ```
