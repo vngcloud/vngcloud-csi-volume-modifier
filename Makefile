@@ -2,6 +2,7 @@ PROTO_FILE=modify.proto
 PROTO_GENERATED_FILES_PATH=pkg/rpc
 VERSION="v0.0.0"
 LDFLAGS="-X 'main.version=$(VERSION)'"
+CONTROLLER_IMG ?= vcr.vngcloud.vn/60108-cuongdm3/vngcloud-csi-volume-modifier
 .PHONY: all
 all: build
 
@@ -36,3 +37,11 @@ check-proto:
 	protoc --go_out=$(TMPDIR) --go_opt=paths=source_relative --go-grpc_out=$(TMPDIR) --go-grpc_opt=paths=source_relative $(PROTO_FILE)
 	diff -r $(TMPDIR) $(PROTO_GENERATED_FILES_PATH) || (printf "\nThe proto file seems to have been modified. PLease run `make proto`."; exit 1)
 	rm -rf $(TMPDIR)
+
+.PHONY: docker-build
+docker-build: ## Build the docker image for controller-manager
+	docker build -f Dockerfile . -t $(CONTROLLER_IMG):$(VERSION)
+
+.PHONY: docker-push
+docker-push: ## Build the docker image for controller-manager
+	docker image push $(CONTROLLER_IMG):$(VERSION)
