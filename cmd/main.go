@@ -27,20 +27,32 @@ import (
 // _____________________________________________________________________________________________________________________CONFIGURATION VARIABLES
 
 var (
-	resyncPeriod       = flag.Duration("resync-period", time.Minute*10, "Resync period for cache")
-	workers            = flag.Int("workers", 10, "Concurrency to process multiple modification requests")
-	showVersion        = flag.Bool("version", false, "Show version")
-	httpEndpoint       = flag.String("http-endpoint", "", "The TCP network address where the HTTP server for diagnostics, including metrics and leader election health check, will listen (example: `:8080`). The default is empty string, which means the server is disabled. Only one of `--metrics-address` and `--http-endpoint` can be set.")
-	clientConfigUrl    = flag.String("client-config-url", "", "URL to build a client config from. Either this or kubeconfig needs to be set if the provisioner is being run out of cluster.")
-	kubeConfig         = flag.String("kubeconfig", "", "Absolute path to the kubeconfig")
-	kubeAPIQPS         = flag.Float64("kube-api-qps", 5, "QPS to use while communicating with the kubernetes apiserver. Defaults to 5.0.")
-	kubeAPIBurst       = flag.Int("kube-api-burst", 10, "Burst to use while communicating with the kubernetes apiserver. Defaults to 10.")
-	csiAddress         = flag.String("csi-address", "/run/csi/socket", "Address of the CSI driver socket.")
-	timeout            = flag.Duration("timeout", 10*time.Second, "Timeout for waiting for CSI driver socket.")
-	metricsPath        = flag.String("metrics-path", "/metrics", "The HTTP path where prometheus metrics will be exposed. Default is `/metrics`.")
+	clientConfigUrl = flag.String("client-config-url", "", "URL to build a client config from. Either this or kubeconfig needs to be set if the provisioner is being run out of cluster.")
+	kubeConfig      = flag.String("kubeconfig", "", "Absolute path to the kubeconfig")
+	resyncPeriod    = flag.Duration("resync-period", time.Minute*10, "Resync period for cache")
+	workers         = flag.Int("workers", 10, "Concurrency to process multiple modification requests")
+
+	csiAddress = flag.String("csi-address", "/run/csi/socket", "Address of the CSI driver socket.")
+	timeout    = flag.Duration("timeout", 10*time.Second, "Timeout for waiting for CSI driver socket.")
+
+	showVersion = flag.Bool("version", false, "Show version")
+
 	retryIntervalStart = flag.Duration("retry-interval-start", time.Second, "Initial retry interval of failed volume modification. It exponentially increases with each failure, up to retry-interval-max.")
 	retryIntervalMax   = flag.Duration("retry-interval-max", 5*time.Minute, "Maximum retry interval of failed volume modification.")
 
+	enableLeaderElection        = flag.Bool("leader-election", false, "Enable leader election.")
+	leaderElectionNamespace     = flag.String("leader-election-namespace", "", "Namespace where the leader election resource lives. Defaults to the pod namespace if not set.")
+	leaderElectionLeaseDuration = flag.Duration("leader-election-lease-duration", 15*time.Second, "Duration, in seconds, that non-leader candidates will wait to force acquire leadership. Defaults to 15 seconds.")
+	leaderElectionRenewDeadline = flag.Duration("leader-election-renew-deadline", 10*time.Second, "Duration, in seconds, that the acting leader will retry refreshing leadership before giving up. Defaults to 10 seconds.")
+	leaderElectionRetryPeriod   = flag.Duration("leader-election-retry-period", 5*time.Second, "Duration, in seconds, the LeaderElector clients should wait between tries of actions. Defaults to 5 seconds.")
+
+	httpEndpoint = flag.String("http-endpoint", "", "The TCP network address where the HTTP server for diagnostics, including metrics and leader election health check, will listen (example: `:8080`). The default is empty string, which means the server is disabled. Only one of `--metrics-address` and `--http-endpoint` can be set.")
+	metricsPath  = flag.String("metrics-path", "/metrics", "The HTTP path where prometheus metrics will be exposed. Default is `/metrics`.")
+
+	kubeAPIQPS   = flag.Float64("kube-api-qps", 5, "QPS to use while communicating with the kubernetes apiserver. Defaults to 5.0.")
+	kubeAPIBurst = flag.Int("kube-api-burst", 10, "Burst to use while communicating with the kubernetes apiserver. Defaults to 10.")
+
+	// Passed through ldflags.
 	version = "<unknown>"
 )
 
