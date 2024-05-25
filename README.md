@@ -1,6 +1,12 @@
 # vngcloud-csi-volume-modifier
 <hr>
 
+**DEV** - [![Package vngcloud-csi-volume-modifier into container image on DEV branch](https://github.com/vngcloud/vngcloud-csi-volume-modifier/actions/workflows/build_dev.yml/badge.svg)](https://github.com/vngcloud/vngcloud-csi-volume-modifier/actions/workflows/build_dev.yml)
+
+**PROD** - [![Package vngcloud-csi-volume-modifier into container image on MAIN branch](https://github.com/vngcloud/vngcloud-csi-volume-modifier/actions/workflows/build_prod.yml/badge.svg)](https://github.com/vngcloud/vngcloud-csi-volume-modifier/actions/workflows/build_prod.yml)
+
+**RELEASE** - [![Release vngcloud-csi-volume-modifier project](https://github.com/vngcloud/vngcloud-csi-volume-modifier/actions/workflows/release.yml/badge.svg)](https://github.com/vngcloud/vngcloud-csi-volume-modifier/actions/workflows/release.yml)
+
 ## Configuration
 - This setup is in the **Ubuntu-22.04** environment.
   ```bash
