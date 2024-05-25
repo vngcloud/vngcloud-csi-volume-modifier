@@ -8,7 +8,7 @@ all: build
 
 .PHONY: build
 build:
-	go build -o main -ldflags ${LDFLAGS} cmd/main.go
+	go build -o bin/main -ldflags ${LDFLAGS} cmd/main.go
 
 .PHONY: proto
 proto:
@@ -29,7 +29,7 @@ check: check-proto
 .PHONY: linux/$(ARCH) bin/vngcloud-csi-volume-modifier
 linux/$(ARCH): bin/vngcloud-csi-volume-modifier
 bin/vngcloud-csi-volume-modifier: | bin
-	CGO_ENABLED=0 GOOS=linux GOARCH=$(ARCH) go build -mod=mod -ldflags ${LDFLAGS} -o bin/vngcloud-csi-volume-modifier ./cmd
+	CGO_ENABLED=0 GOOS=linux GOARCH=$(ARCH) go build -mod=mod -ldflags ${LDFLAGS} -o vngcloud-csi-volume-modifier ./cmd
 
 .PHONY: check-proto
 check-proto:
