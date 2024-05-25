@@ -1,0 +1,125 @@
+name: Package vngcloud-csi-volume-modifier into container image on DEV branch
+
+on:
+  push:
+    branches:
+      - dev
+
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  package-image:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[build]')
+    steps:
+      - name: Send alert that a new commit has been created
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            🚀 *NEW COMMIT*
+            *Repository*: `${{ github.repository }}`
+            *Author*: `${{ github.actor }}`
+            *Action*: Building `vngcloud-csi-volume-modifier` image
+            *Commit message*:
+            ```
+            ${{ github.event.commits[0].message }}
+            ```
+            *See changes*: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            *See workflow*: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - uses: actions/checkout@v4
+      - name: Login to VngCloud Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.VCR_DEV_REGISTRY }}
+          username: ${{ secrets.VCR_DEV_USERNAME }}
+          password: ${{ secrets.VCR_DEV_PASSWORD }}
+      - name: Build vngcloud-csi-volume-modifier image
+        continue-on-error: true
+        run: |
+          export REGISTRY=${{ secrets.VCR_DEV_REGISTRY }}
+          export VERSION=v0.0.0-$(date +'%y%m%d%H%M%S')
+          make docker-build
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+      - name: Send alert that the image has been built failed
+        uses: appleboy/telegram-action@master
+        if: ${{ failure() }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            ⛔ *ERROR*
+            *Repository*: `${{ github.repository }}`
+            *Author*: `${{ github.actor }}`
+            *Action*: Failed to build `vngcloud-csi-volume-modifier` image
+            *Commit message*:
+            ```
+            ${{ github.event.commits[0].message }}
+            ```
+            *See changes*: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            *See workflow*: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: Send alert that the image has been built success
+        uses: appleboy/telegram-action@master
+        if: ${{ success() }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            📦 *SUCCESS*
+            *Repository*: `${{ github.repository }}`
+            *Author*: `${{ github.actor }}`
+            *Action*: The `vngcloud-csi-volume-modifier:${{ env.VERSION }}` image is built successfully, try to push it to VngCloud Registry
+            *Commit message*:
+            ```
+            ${{ github.event.commits[0].message }}
+            ```
+            *See changes*: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            *See workflow*: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: Push vngcloud-csi-volume-modifier image
+        continue-on-error: true
+        run: |
+          export REGISTRY=${{ secrets.VCR_DEV_REGISTRY }}
+          export VERSION=$VERSION
+          make docker-push
+      - name: Send alert that the image has been pushed failed
+        uses: appleboy/telegram-action@master
+        if: ${{ failure() }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            ⛔ *ERROR*
+            *Repository*: `${{ github.repository }}`
+            *Author*: `${{ github.actor }}`
+            *Action*: Failed to PUSH `vngcloud-csi-volume-modifier` image to VngCloud registry
+            *Commit message*:
+            ```
+            ${{ github.event.commits[0].message }}
+            ```
+            *See changes*: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            *See workflow*: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: Send alert that the image has been pushed success
+        uses: appleboy/telegram-action@master
+        if: ${{ success() }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            ⛳ *SUCCESS*
+            *Repository*: `${{ github.repository }}`
+            *Author*: `${{ github.actor }}`
+            *Action*: The `vngcloud-csi-volume-modifier:${{ env.VERSION }}` image is pushed successfully to VngCloud registry
+            *Commit message*:
+            ```
+            ${{ github.event.commits[0].message }}
+            ```
+            *See changes*: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            *See workflow*: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

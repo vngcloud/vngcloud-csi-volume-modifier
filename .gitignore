@@ -21,3 +21,6 @@ rad.json
 #Test results file
 TestResults.xml
 .idea/
+/go1.22.0/
+/pkg/sumdb/
+/pkg/mod/

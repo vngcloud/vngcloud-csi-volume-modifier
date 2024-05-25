@@ -1,6 +1,6 @@
 PROTO_FILE=modify.proto
 PROTO_GENERATED_FILES_PATH=pkg/rpc
-VERSION="v0.0.0"
+VERSION ?= v0.0.0
 LDFLAGS="-X 'main.version=$(VERSION)'"
 CONTROLLER_IMG ?= vcr.vngcloud.vn/60108-cuongdm3/vngcloud-csi-volume-modifier
 .PHONY: all

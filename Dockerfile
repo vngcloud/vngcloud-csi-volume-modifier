@@ -6,7 +6,7 @@ RUN go mod download
 COPY . .
 ARG TARGETOS=linux
 ARG TARGETARCH=amd64
-ARG VERSION="v0.0.0"
+ARG VERSION
 RUN OS=$TARGETOS ARCH=$TARGETARCH make $TARGETOS/$TARGETARCH
 
 FROM registry.k8s.io/build-image/go-runner:v2.3.1-go1.22.0-bookworm.0 AS linux-vngcloud
