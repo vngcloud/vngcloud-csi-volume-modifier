@@ -40,6 +40,7 @@ var (
 	retryIntervalStart = flag.Duration("retry-interval-start", time.Second, "Initial retry interval of failed volume modification. It exponentially increases with each failure, up to retry-interval-max.")
 	retryIntervalMax   = flag.Duration("retry-interval-max", 5*time.Minute, "Maximum retry interval of failed volume modification.")
 
+	externalResizerLeaseName    = flag.String("external-resizer-lease-name", "external-resizer-bs-csi-vngcloud-vn", "Name of the lease object that the external-resizer is holding.")
 	enableLeaderElection        = flag.Bool("leader-election", false, "Enable leader election.")
 	leaderElectionNamespace     = flag.String("leader-election-namespace", "", "Namespace where the leader election resource lives. Defaults to the pod namespace if not set.")
 	leaderElectionLeaseDuration = flag.Duration("leader-election-lease-duration", 15*time.Second, "Duration, in seconds, that non-leader candidates will wait to force acquire leadership. Defaults to 15 seconds.")
@@ -204,6 +205,9 @@ func main() {
 
 	informerFactoryLeases := informers.NewSharedInformerFactoryWithOptions(kubeClient, *resyncPeriod, informers.WithNamespace(podNamespace))
 	leaseInformer := informerFactoryLeases.Coordination().V1().Leases().Informer()
+
+	klog.InfoS("[DEBUG] - main: Waiting to receive external-resizer lease update", "externalResizerLeaseName", *externalResizerLeaseName)
+
 	leaseInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		UpdateFunc: func(oldObj, newObj interface{}) {
 			lease, ok := newObj.(*lcoorV1.Lease)
@@ -211,7 +215,7 @@ func main() {
 				klog.ErrorS(nil, "Failed to process object, expected it to be a Lease", "obj", newObj)
 				return
 			}
-			if lease.Name == "external-resizer-bs-csi-vngcloud-vn" {
+			if lease.Name == *externalResizerLeaseName {
 				leaseChannel <- lease
 			}
 		},
