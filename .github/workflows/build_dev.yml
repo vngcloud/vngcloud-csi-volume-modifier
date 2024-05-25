@@ -12,6 +12,9 @@ on:
 jobs:
   package-image:
     runs-on: ubuntu-latest
+    environment:
+      name: dev  # Set the environment name
+    # Only trigger the workflow if the commit message contains '[build]'
     if: contains(github.event.head_commit.message, '[build]')
     steps:
       - name: Send alert that a new commit has been created
@@ -35,13 +38,13 @@ jobs:
       - name: Login to VngCloud Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.VCR_DEV_REGISTRY }}
-          username: ${{ secrets.VCR_DEV_USERNAME }}
-          password: ${{ secrets.VCR_DEV_PASSWORD }}
+          registry: ${{ secrets.VCR_REGISTRY }}
+          username: ${{ secrets.VCR_USERNAME }}
+          password: ${{ secrets.VCR_PASSWORD }}
       - name: Build vngcloud-csi-volume-modifier image
         continue-on-error: true
         run: |
-          export REGISTRY=${{ secrets.VCR_DEV_REGISTRY }}
+          export REGISTRY=${{ secrets.VCR_REGISTRY }}
           export VERSION=v0.0.0-$(date +'%y%m%d%H%M%S')
           make docker-build
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
@@ -84,7 +87,7 @@ jobs:
       - name: Push vngcloud-csi-volume-modifier image
         continue-on-error: true
         run: |
-          export REGISTRY=${{ secrets.VCR_DEV_REGISTRY }}
+          export REGISTRY=${{ secrets.VCR_REGISTRY }}
           export VERSION=$VERSION
           make docker-push
       - name: Send alert that the image has been pushed failed
