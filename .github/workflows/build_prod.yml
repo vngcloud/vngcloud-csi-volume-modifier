@@ -43,6 +43,7 @@ jobs:
         run: |
           export REGISTRY=${{ secrets.VCR_REGISTRY }}
           export VERSION=${{ github.ref_name }}
+          export CONTROLLER_IMG=${{ secrets.VCR_REGISTRY }}/vngcloud-csi-volume-modifier
           make docker-build
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
       - name: Send alert that the image has been built failed
@@ -86,6 +87,7 @@ jobs:
         run: |
           export REGISTRY=${{ secrets.VCR_REGISTRY }}
           export VERSION=$VERSION
+          export CONTROLLER_IMG=${{ secrets.VCR_REGISTRY }}/vngcloud-csi-volume-modifier
           make docker-push
       - name: Send alert that the image has been pushed failed
         uses: appleboy/telegram-action@master
