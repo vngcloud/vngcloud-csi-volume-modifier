@@ -8,7 +8,7 @@ all: build
 
 .PHONY: build
 build:
-	go build -o bin/main -ldflags ${LDFLAGS} cmd/main.go
+	go build -o main -ldflags ${LDFLAGS} cmd/main.go
 
 .PHONY: proto
 proto:
