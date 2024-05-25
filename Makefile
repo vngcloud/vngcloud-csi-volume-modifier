@@ -41,7 +41,7 @@ check-proto:
 .PHONY: docker-build
 docker-build: ## Build the docker image for controller-manager
 	# !IMPORTANT: remember `mkdir -p bin` before running this command
-	docker build -f Dockerfile . -t $(CONTROLLER_IMG):$(VERSION)
+	docker build -f Dockerfile . --build-arg VERSION=$(VERSION) -t $(CONTROLLER_IMG):$(VERSION)
 
 .PHONY: docker-push
 docker-push: ## Build the docker image for controller-manager
