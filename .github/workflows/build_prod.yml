@@ -12,7 +12,7 @@ jobs:
   package-image:
     runs-on: ubuntu-latest
     environment:
-      name: prod  # Set the environment name
+      name: production  # Set the environment name
     if: contains(github.event.head_commit.message, '[build]')
     steps:
       - name: Send alert that a new commit has been created
