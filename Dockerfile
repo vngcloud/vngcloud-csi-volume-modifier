@@ -7,7 +7,7 @@ COPY . .
 ARG TARGETOS=linux
 ARG TARGETARCH=amd64
 ARG VERSION
-RUN OS=$TARGETOS ARCH=$TARGETARCH make $TARGETOS/$TARGETARCH
+RUN OS=$TARGETOS ARCH=$TARGETARCH VERSION=$VERSION make $TARGETOS/$TARGETARCH
 
 FROM registry.k8s.io/build-image/go-runner:v2.3.1-go1.22.0-bookworm.0 AS linux-vngcloud
 COPY --from=builder /go/src/github.com/vngcloud/vngcloud-csi-volume-modifier/vngcloud-csi-volume-modifier /bin/vngcloud-csi-volume-modifier
