@@ -28,7 +28,7 @@ check: check-proto
 
 .PHONY: linux/$(ARCH) bin/vngcloud-csi-volume-modifier
 linux/$(ARCH): bin/vngcloud-csi-volume-modifier
-bin/vngcloud-csi-volume-modifier: | bin
+bin/vngcloud-csi-volume-modifier:
 	CGO_ENABLED=0 GOOS=linux GOARCH=$(ARCH) go build -mod=mod -ldflags ${LDFLAGS} -o vngcloud-csi-volume-modifier ./cmd
 
 .PHONY: check-proto
